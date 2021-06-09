@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!--    <link rel="stylesheet" href="styles/page_style.css">-->
+    <link th:rel="stylesheet" th:href="@{assets/bootstrap-datepicker/css/bootstrap-datepicker.css}"/>
+    <link th:rel="stylesheet" th:href="@{assets/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css}"/>
+    <link th:rel="stylesheet" th:href="@{webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+    <link th:rel="stylesheet" th:href="@{webjars/font-awesome/5.11.2/css/all.css} "/>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <title>User Page</title>
+    <style>
+        .box{
+            /*width: 600px;*/
+            /*height: 400px;*/
+            padding: 20px;
+            /*margin: 100px auto;*/
+            position:fixed;
+            width:100%;
+            height:100%;
+            opacity:0.8;
+
+            background-image: url('https://www.gymmarine.com/wp-content/uploads/2017/09/IMG_C3C381298781-1-1372x800.jpeg');
+            background-size: cover;
+        }
+    </style>
+
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">Fitness Center</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown" th:align="top">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        About
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/classes/all">Our Classes</a>
+                        <a class="dropdown-item" href="/subscription/all">Subscription Types</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="box">
+<div class="container">
+    <center><h1>Personal information</h1></center>
+    <table  style="width: 80%">
+        <tr>
+            <strong> <th>Username</th></strong>
+            <strong><th>PNC</th></strong>
+                    <strong><th th:if="${entry.subscriptionType != null && entry.expirationDate.after(currentDate)}">
+                Subscription type
+                    </th></strong>
+<!--            <th>Held each week on</th>-->
+        </tr >
+        <tr>
+            <td >
+               <strong> <p th:text="${entry.username}">Text..</p ></strong>
+            </td>
+            <td >
+                <strong> <p th:text="${entry.pnc}">Text..</p></strong>
+            </td>
+
+             <td th:if="${entry.subscriptionType != null && entry.expirationDate.after(currentDate)}" >
+                 <strong>   <p th:text="${entry.subscriptionType != null && entry.expirationDate.after(currentDate)} ? ${entry.subscriptionType.name}">Text..<</p></strong>
+            </td>
+            <td>
+                <a th:href="@{/user/update/{id}/(id = ${entry.id})}">
+                    <button class="btn btn-primary">
+                        Edit Personal Info
+                    </button>
+                </a>
+            </td>
+        </tr>
+
+    </table>
+    <div>
+    <a th:href="@{/reservation/{id}(id = ${entry.id})}">
+    <button class="btn btn-primary" th:disabled="${entry.subscriptionType == null || entry.expirationDate.before(currentDate)} ? disabled">
+        Book gym time
+    </button>
+    </a>
+    </div>
+<!--    <div th:if="${entry.subscriptionType != null && entry.expirationDate.after()}"-->
+    <div>
+        <a th:href="@{/reservation/classes/{id}(id = ${entry.id})}">
+            <button class="btn btn-primary" th:disabled="${entry.subscriptionType == null || entry.expirationDate.before(currentDate) || classesFullyBooked} ? disabled ">
+                Book a place at the available sport classes
+            </button>
+        </a>
+    </div>
+
+
+    <div>
+        <a th:href="@{/subscription/new/{id}(id= ${entry.id})}">
+    <button class="btn btn-primary" th:disabled="${entry.subscriptionType != null && entry.expirationDate.after(currentDate)} ? disabled ">
+        Renew Subscription
+    </button>
+        </a>
+
+    </div>
+</div>
+</div>
+</body>
+</html>

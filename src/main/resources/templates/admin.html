@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <!--    <link rel="stylesheet" href="styles/page_style.css">-->
+    <link th:rel="stylesheet" th:href="@{assets/bootstrap-datepicker/css/bootstrap-datepicker.css}"/>
+    <link th:rel="stylesheet" th:href="@{assets/bootstrap-datepicker/css/bootstrap-datepicker.standalone.css}"/>
+    <link th:rel="stylesheet" th:href="@{webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+    <link th:rel="stylesheet" th:href="@{webjars/font-awesome/5.11.2/css/all.css} "/>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <title>HOME</title>
+
+    <style>
+        body, html {
+            height: 100%;
+        }
+        .box{
+            /*width: 600px;*/
+            /*height: 400px;*/
+            padding: 20px;
+            /*margin: 100px auto;*/
+            position:fixed;
+            width:100%;
+            height:100%;
+            opacity:0.8;
+            background-position: center;
+            background-image: url('https://www.gymmarine.com/wp-content/uploads/2017/09/IMG_C3C381298781-1-1372x800.jpeg');
+            background-size: cover;
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">Fitness Center</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+<!--                <li class="nav-item dropdown" th:align="top">-->
+<!--                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+<!--                        About-->
+<!--                    </a>-->
+<!--                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">-->
+<!--                        <a class="dropdown-item" href="/classes/all">Our Classes</a>-->
+<!--                        <a class="dropdown-item" href="/subscription/all">Subscription Types</a>-->
+<!--                    </div>-->
+<!--                </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!--<div class="box">-->
+<div class="wrapper">
+    <div id="content">
+        <center><h1>All available subscription types  </h1></center>
+        <div class = "container-fluid">
+            <table  style="width: 80%">
+                <tr>
+                    <th>Package Name</th>
+                    <th>Number of Entries per Day</th>
+                </tr >
+                <tr th:each="subscription : ${subscriptions}">
+                    <td >
+                        <!--                        <a th:href="@{/user/{id}(id = ${user.id})}" style="color: inherit; text-decoration: none;">-->
+                        <p th:text="${subscription.name}">Text..</p >
+                        <!--                        </a>-->
+                    </td>
+                    <td >
+                        <p th:text="${subscription.nrOfEntries}">Text..</p>
+                    </td>
+                    <td>
+<!--                        <script type = "text/javascript">-->
+<!--                            connectSubject();-->
+<!--                            function sendDelete() {-->
+<!--                                stompClient.send("/app/hello", {}, JSON.stringify({'name':"smith"})); // $("#title").val()-->
+<!--                            }-->
+<!--                        </script>-->
+                        <a th:if="${!subscription.name.contentEquals('Trainers Subscription')}" th:href="@{/subscription/delete/{id}(id = ${subscription.id})}">
+                            <input type="button" onclick="sendDelete()" value="DELETE" >
+                        </a>
+                        <a th:href="@{/subscription/update/{id}/(id = ${subscription.id})}">
+                            <button>
+                                EDIT
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+
+            </table>
+            <a th:href="@{/subscription/add/}">
+                <button>
+                    Add New Subscription Type
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper">
+    <div id="content">
+        <center><h1>All classes available </h1></center>
+        <div class = "container-fluid">
+            <table  style="width: 80%">
+                <tr>
+                    <th>Class Type</th>
+                    <th>Trainer</th>
+                    <th>Held each week on</th>
+                </tr >
+                <tr th:each="sportClass : ${sportClasses}">
+                    <td >
+                        <!--                        <a th:href="@{/user/{id}(id = ${user.id})}" style="color: inherit; text-decoration: none;">-->
+                        <p th:text="${sportClass.name}">Text..</p >
+                        <!--                        </a>-->
+                    </td>
+                    <td >
+                        <p th:text="${sportClass.trainerUsername}">Text..</p>
+                    </td>
+                    <td >
+                        <p th:text="${sportClass.dayOfTheWeek}">Text..</p>
+                    </td>
+                    <td>
+                        <!--                        <script type = "text/javascript">-->
+                        <!--                            connectSubject();-->
+                        <!--                            function sendDelete() {-->
+                        <!--                                stompClient.send("/app/hello", {}, JSON.stringify({'name':"smith"})); // $("#title").val()-->
+                        <!--                            }-->
+                        <!--                        </script>-->
+                        <a th:href="@{/classes/delete/{id}(id = ${sportClass.id})}">
+                            <input type="button" onclick="sendDelete()" value="DELETE" >
+                        </a>
+                        <a th:href="@{/classes/update/{id}/(id = ${sportClass.id})}">
+                            <button>
+                                EDIT
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+
+            </table>
+            <a th:href="@{/classes/add/}">
+                <button>
+                    Add New Class Type
+                </button>
+            </a>
+        </div>
+
+    </div>
+</div>
+
+<div class="wrapper">
+    <div id="content">
+        <center><h1>All trainers </h1></center>
+        <div class = "container-fluid">
+            <div th:if="${errorMessageAuthor != null}" class="alert alert-danger alert-dismissible">
+                <a th:href="@{/admin/}" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span th:text="${errorMessageAuthor != null} ? ${errorMessageAuthor}"></span>
+            </div>
+            <table  style="width: 80%">
+                <tr>
+                    <th>Trainer name</th>
+                    <th>Username</th>
+                    <th>Held Classes</th>
+                </tr >
+                <tr th:each="trainer : ${trainers}">
+                    <td >
+                        <!--                        <a th:href="@{/user/{id}(id = ${user.id})}" style="color: inherit; text-decoration: none;">-->
+                        <p th:text="${trainer.name}">Text..</p >
+                        <!--                        </a>-->
+                    </td>
+                    <td >
+                        <p th:text="${trainer.username}">Text..</p>
+                    </td>
+                    <td >
+                        <table  style="width: 80%">
+                            <tr th:each="class : ${trainer.heldClasses}">
+                                <td >
+                                        <p th:text="${class.name}">Text..</p >
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                    <td>
+                        <!--                        <script type = "text/javascript">-->
+                        <!--                            connectSubject();-->
+                        <!--                            function sendDelete() {-->
+                        <!--                                stompClient.send("/app/hello", {}, JSON.stringify({'name':"smith"})); // $("#title").val()-->
+                        <!--                            }-->
+                        <!--                        </script>-->
+                        <a th:href="@{/trainer/delete/{id}(id = ${trainer.id})}">
+                            <input type="button" onclick="sendDelete()" value="DELETE" >
+                        </a>
+                        <a th:href="@{/trainer/update/{id}/(id = ${trainer.id})}">
+                            <button>
+                                EDIT
+                            </button>
+                        </a>
+                    </td>
+                </tr>
+
+            </table>
+            <a th:href="@{/trainer/add/}">
+                <button>
+                    Create new Trainer Account
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="wrapper">
+    <div id="content">
+        <center><h1>All reservations </h1></center>
+        <div class = "container-fluid">
+            <div th:if="${errorMessageAuthor != null}" class="alert alert-danger alert-dismissible">
+                <a th:href="@{/admin/}" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span th:text="${errorMessageAuthor != null} ? ${errorMessageAuthor}"></span>
+            </div>
+            <table  style="width: 80%">
+                <tr>
+                    <th>Reservation Date</th>
+                    <th>Client Username</th>
+                    <th>Normal(false) or For Specific Class(true)</th>
+                </tr >
+                <tr th:each="reservation : ${reservations}">
+                    <td >
+                        <!--                        <a th:href="@{/user/{id}(id = ${user.id})}" style="color: inherit; text-decoration: none;">-->
+                        <p th:text="${reservation.getFrom().toString()}">Text..</p >
+                        <!--                        </a>-->
+                    </td>
+                    <td >
+                        <p th:text="${reservation.getPersonUsername()}">Text..</p>
+                    </td>
+                    <td >
+                        <p th:text="${reservation.isForClass()}">Text..</p>
+                    </td>
+                </tr>
+
+            </table>
+            <a th:href="@{/trainer/add/}">
+                <button>
+                    Create new Trainer Account
+                </button>
+            </a>
+        </div>
+    </div>
+</div>
+<!--</div>-->
+</body>
+
+<!-- jQuery CDN - Slim version (=without AJAX) -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<!-- Popper.JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
+<!-- Bootstrap JS -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
+<!-- SweetAlert -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<!-- Optional: include a polyfill for ES6 Promises for IE11 -->
+<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10.6.1/dist/sweetalert2.all.min.js"></script>
+
+<script type="text/javascript" th:inline="javascript">
+    $(document).ready(function () {
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+            $(this).toggleClass('active');
+        });
+
+    });
+</script>
+</html>

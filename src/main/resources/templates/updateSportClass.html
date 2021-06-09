@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/fontawesome.js" integrity="sha384-6OIrr52G08NpOFSZdxxz1xdNSndlD4vdcf/q2myIUVO0VsqaGHJsB0RaBE01VTOY" crossorigin="anonymous"></script>
+    <script type="text/javascript" th:src="@{/js/app.js}"></script>
+    <title>Update sport class</title>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">Fitness Center</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown" th:align="top">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        About
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/classes/all">Our Classes</a>
+                        <a class="dropdown-item" href="/subscription/all">Subscription Types</a>
+                    </div>
+                </li>
+                <!--                    <li class="nav-item">-->
+                <!--                        <a class="nav-link" href="#">About</a>-->
+                <!--                    </li>-->
+                <li class="nav-item">
+                    <a class="nav-link" href="/login">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="wrapper">
+    <div id="content">
+        <div class="container-fluid">
+        </div>
+        <center><h1>Update sport class</h1></center>
+        <div class="modal-dialog container-fluid" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add record</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/classes/update/submit/}" th:object="${entry}"
+                          method="post">
+                        <fieldset>
+                            <div class="form-group">
+                                <label for="id" style="display: none">Id</label>
+                                <input type="text" th:field="${entry.id}" autocomplete="on" class="form-control" id="id" style="display: none">
+                            </div>
+                            <div class="form-group">
+                                <label for="title">Title</label>
+                                <input type="text" th:field="*{name}" autocomplete="on" class="form-control" id="title">
+                            </div>
+                            <div class="form-group">
+                                <label for="dayOfTheWeek">Takes Place On</label>
+                                <select th:field="*{dayOfTheWeek}" id="dayOfTheWeek">
+
+                                    <option th:each="element,row : ${days}"
+                                            th:value="${element.toString()}"
+                                            th:text="${element.toString()}"
+                                            th:selected="${entry.dayOfTheWeek.contentEquals(element.toString())}">
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="trainer">Trainer</label>
+                                <select th:field="*{trainerUsername}" id="trainer">
+
+                                    <option th:each="element,row : ${trainers}"
+                                            th:value="${element.username}"
+                                            th:text="${element.name}"
+                                            th:selected="${entry.trainerUsername.contentEquals(element.username)}">
+                                    </option>
+                                </select>
+                            </div>
+
+                        </fieldset>
+<!--                        <script>-->
+<!--                            connectSubject();-->
+<!--                        </script>-->
+                        <div class="modal-footer">
+                            <button id = "update" type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+
+                </div>
+                <a th:href="@{/admin/}">
+                    <button>
+                        CANCEL
+                    </button>
+                </a>
+                <div th:if="${errorMessageAuthor != null}" class="alert alert-danger alert-dismissible">
+                    <a th:href="@{/classes/update/{id}/(id = ${entry.id})}" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                    <span th:text="${errorMessageAuthor != null} ? ${errorMessageAuthor}"></span>
+                </div>
+                <!--                <span th:text="${errorMessageAuthor != null} ? ${errorMessageAuthor}"></span>-->
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"/>
+    <title>Make Reservation</title>
+
+    <meta charset="UTF-8"/>
+    <title>Spring Boot Thymeleaf Application - Bootstrap Date Time Picker</title>
+
+    <link th:rel="stylesheet" th:href="@{/assets/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.css}"/>
+    <link th:rel="stylesheet" th:href="@{/webjars/bootstrap/4.0.0-2/css/bootstrap.min.css} "/>
+    <script src="/webjars/jquery/jquery.min.js"></script>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.13/js/solid.js" integrity="sha384-tzzSw1/Vo+0N5UhStP3bvwWPq+uvzCMfrN1fEFe+xBmv1C/AtVX5K0uZtmcHitFZ" crossorigin="anonymous"></script>
+    <link th:rel="stylesheet" th:href="@{/webjars/font-awesome/5.11.2/css/all.css} "/>
+
+
+    <script type="text/javascript" th:src="@{/js/app.js}"></script>
+    <style>
+        .box{
+            /*width: 600px;*/
+            /*height: 400px;*/
+            padding: 20px;
+            /*margin: 100px auto;*/
+            position:fixed;
+            width:100%;
+            height:100%;
+            opacity:0.8;
+
+            background-image: url('https://www.gymmarine.com/wp-content/uploads/2017/09/IMG_C3C381298781-1-1372x800.jpeg');
+            background-size: cover;
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark static-top">
+    <div class="container">
+        <a class="navbar-brand" href="/">Fitness Center</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/home">Home
+                        <span class="sr-only">(current)</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown" th:align="top">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        About
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <a class="dropdown-item" href="/classes/all">Our Classes</a>
+                        <a class="dropdown-item" href="/subscription/all">Subscription Types</a>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Login</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<div class="box">
+<div class="container">
+
+    <div class="row">
+        <div class="col-md-4 mt-5">
+            <form action="#" method="post" th:action="@{/reservation/submit/{id}(id=${id})}" th:object="${reservation}">
+                <div class="form-group">
+                    <label for="date">Date:</label>
+                    <div class="input-group date" id="datetimepicker8" data-target-input="nearest">
+                        <input type="text" class="form-control datetimepicker-input" data-target="#datetimepicker8"
+                               th:field="*{fromDate}" id="date" placeholder="Date"/>
+                        <div class="input-group-append" data-target="#datetimepicker8" data-toggle="datetimepicker">
+                            <span class="input-group-text"><i class="fa fa-calendar-alt"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="send" type="submit" class="btn btn-primary">Submit</button>
+            </form>
+<!--            entry.getRole().toString().contentEquals('NORMAL')-->
+            <div th:if="${user.getRole().toString().contentEquals('NORMAL')}">
+                <a th:href="@{/user/{id}(id=${user.id})}">
+                    <button class="btn btn-primary">
+                        CANCEL
+                    </button>
+                </a>
+            </div>
+            <div th:if="${user.getRole().toString().contentEquals('TRAINER')}">
+                <a th:href="@{/trainer/{id}(id=${user.id})}">
+                    <button class="btn btn-primary">
+                        CANCEL
+                    </button>
+                </a>
+            </div>
+        </div>
+        <div th:if="${errorMessageAuthor != null}" class="alert alert-danger alert-dismissible">
+            <a th:href="@{/classes/add/}" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span th:text="${errorMessageAuthor != null} ? ${errorMessageAuthor}"></span>
+        </div>
+    </div>
+</div>
+</div>
+
+<script th:src="@{/webjars/jquery/jquery.min.js}"></script>
+<script th:src="@{/webjars/popper.js/umd/popper.min.js}"></script>
+
+
+<script th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+<script th:src="@{/assets/moment/moment.min.js}"></script>
+
+<script th:src="@{/assets/tempusdominus-bootstrap-4/tempusdominus-bootstrap-4.min.js}"></script>
+<script th:inline="javascript">
+    var stompClient = null;
+
+    window.onload = function() {
+        connect();
+    };
+
+    function setConnected(connected) {
+        $("#connect").prop("disabled", connected);
+        $("#disconnect").prop("disabled", !connected);
+        if (connected) {
+            $("#conversation").show();
+        }
+        else {
+            $("#conversation").hide();
+        }
+        $("#greetings").html("");
+    }
+
+    // function connectSubject() {
+    //     var socket = new SockJS('/gs-guide-websocket');
+    //     stompClient = Stomp.over(socket);
+    //     stompClient.connect({}, function (frame) {
+    //         setConnected(true);
+    //         console.log('Connected: ' + frame);
+    //         // stompClient.subscribe('/topic/greetings', function (greeting) {
+    //         //     showGreeting(JSON.parse(greeting.body).content);
+    //         //     location.reload(true);
+    //         // });
+    //     });
+    // }
+
+    function connect() {
+        var socket = new SockJS('/gs-guide-websocket');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, function (frame) {
+            setConnected(true);
+            console.log('Connected: ' + frame);
+            stompClient.subscribe('/topic/refresh', function (greeting) {
+                //  showGreeting(JSON.parse(greeting.body).content);
+                location.reload(true);
+            });
+        });
+    }
+
+    function disconnect() {
+        if (stompClient !== null) {
+            stompClient.disconnect();
+        }
+        setConnected(false);
+        console.log("Disconnected");
+    }
+    // @{/reservation/submit/{id}(id=${id})}
+    function sendName() {
+        location.href='/reservation/submit/'.concat($("#id").val());//{idAuthor}(idAuthor = ${"idAuthor"}.val())';
+        stompClient.send("/app/hello", {}, JSON.stringify({'name':"smith"})); // $("#title").val()
+    }
+    function sendUpdate() {
+        location.href='/articles/update/submit/'.concat($("#idAuthor").val());//{idAuthor}(idAuthor = ${"idAuthor"}.val())';
+        stompClient.send("/app/hello", {}, JSON.stringify({'name':"smith"})); // $("#title").val()
+    }
+
+    function showGreeting(message) {
+        $("#greetings").append("<tr><td>" + message + "</td></tr>");
+    }
+
+    $(function () {
+        // $("form").on('submit', function (e) {
+        //     e.preventDefault();
+        // });
+        $( "#connect" ).click(function() { connect(); });
+        $( "#disconnect" ).click(function() { disconnect(); });
+        $( "#send" ).click(function() { sendName(); });
+        $( "#update" ).click(function() { sendUpdate(); });
+    });
+
+    $.fn.datetimepicker.Constructor.Default = $.extend({}, $.fn.datetimepicker.Constructor.Default, {
+        icons: {
+            time: 'far fa-clock',
+            date: 'far fa-calendar',
+            up: 'fas fa-arrow-up',
+            down: 'fas fa-arrow-down',
+            previous: 'fas fa-chevron-left',
+            next: 'fas fa-chevron-right',
+            today: 'far fa-calendar-check-o',
+            clear: 'far fa-trash',
+            close: 'far fa-times'
+        }
+    });
+
+    /*<![CDATA[*/
+
+    var dateList = /*[[${forbiddenDates}]]*/ 'default';
+    var arrayLength = dateList.length;
+    var disInt = [];
+    let busyDays =[];
+    for (var i = 0; i < arrayLength; i++) {
+        busyDays.push(moment(dateList[i]));
+        var date = moment(dateList[i]).toDate();
+        date.setTime(date.getTime() + (60*60*1000));
+        var date2 = moment(dateList[i]).toDate();
+        date2.setTime(date2.getTime() - (60*60*1000));
+        let momentDate = moment(date);
+        let momentDate2 = moment(date2);
+        console.log(momentDate2);
+        console.log(momentDate);
+        var dis = [momentDate2,momentDate];
+        disInt.push(dis);
+        //Do something
+    }
+    let start = new Date();
+    start.setHours(start.getHours()+1);
+    // set end date to max one year period:
+    let end = new Date(new Date().setMonth(start.getMonth()+1));
+    $("#datetimepicker8").datetimepicker({
+        minDate: start,
+        maxDate: end,
+        debug: true,
+        format: 'YYYY-MM-DD HH',
+        sideBySide: true,
+        disabledTimeIntervals: disInt
+    });
+    /*]]>*/
+</script>
+</body>
+</html>
